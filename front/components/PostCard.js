@@ -60,7 +60,10 @@ const PostCard = ({ post }) => {
             <PostImages images={post.Images} />
           )
         }
-        extra={id && <FollowButton post={post} />}
+        extra={
+          id &&
+          id !== post.UserId && <FollowButton post={post} />
+        }
         actions={[
           <RetweetOutlined key="retweet" />,
           liked ? (

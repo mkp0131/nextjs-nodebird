@@ -65,6 +65,11 @@ postRouter
           {
             model: db.Image,
           },
+          {
+            model: db.User,
+            as: 'Liker',
+            attributes: ['id'],
+          },
         ],
       });
 

@@ -16,9 +16,10 @@ const FollowButton = ({ post }) => {
   // 현재 유저 정보
   const user = useSelector((state) => state.user.user);
   // 유저의 팔로우 리스트에 포스트의 팔로우가 있는지 확인
-  const isFollowing = user.Followings.find(
-    (following) => following.id === post.User.id
-  );
+  const isFollowing = user.Followings.find((following) => {
+    return following.id === post.UserId;
+  });
+
   const onClick = useCallback(() => {
     // 팔로우 라면
     if (isFollowing) {

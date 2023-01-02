@@ -119,4 +119,30 @@ userRouter
     }
   });
 
+userRouter
+  .route('/:userId/follow')
+  .patch(isLoggedIn, async (req, res, next) => {
+    try {
+      const userId = req.params.userId;
+      const user = await User.findOne({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!user) {
+        return res
+          .status(403)
+          .send('없는 사람을 팔로우하려고 하시네요?');
+      }
+
+      await user.addFollowers(userId);
+
+      return res.status(200).send({ id: parseInt(userId) });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  });
+
 module.exports = userRouter;

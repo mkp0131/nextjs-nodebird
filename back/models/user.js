@@ -6,7 +6,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User", // Mysql 에서는 users 테이블이 생성, ✅ 모델은 대문자를 쓰는것은 시퀄라이저의 규칙이다.
+    'User', // Mysql 에서는 users 테이블이 생성, ✅ 모델은 대문자를 쓰는것은 시퀄라이저의 규칙이다.
     {
       // id 가 기본으로 들어있다.
       // createdAt, updatedAt 이 기본으로 들어있다.
@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       // 한글저장 이모지 저장
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
     }
   );
 
@@ -36,16 +36,19 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (db) => {
     db.User.hasMany(db.Post); // 한명의 유저가 많은 글을 가질수있다.
     db.User.hasMany(db.Comment);
-    db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" });
-    db.User.belongsToMany(db.User, {
-      through: "Follow",
-      as: "Followers",
-      foreingKey: "FollowingId",
+    db.User.belongsToMany(db.Post, {
+      through: 'Like',
+      as: 'Liker',
     });
     db.User.belongsToMany(db.User, {
-      through: "Follow",
-      as: "Followings",
-      foreingKey: "FollowerId",
+      through: 'Follow',
+      as: 'Followers',
+      foreingKey: 'FollowingId',
+    });
+    db.User.belongsToMany(db.User, {
+      through: 'Follow',
+      as: 'Followings',
+      foreingKey: 'FollowerId',
     });
   };
 

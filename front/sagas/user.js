@@ -120,13 +120,17 @@ function* signup(action) {
   }
 }
 
+function followUserApi(data) {
+  return axios.patch(`/user/${data.id}/follow`);
+}
+
 function* followUser(action) {
   try {
-    yield delay(DELAY_TIME);
+    const result = yield call(followUserApi, action.data);
 
     yield put({
       type: FOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (error) {
     yield put({
