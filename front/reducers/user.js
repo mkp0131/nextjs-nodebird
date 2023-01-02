@@ -4,6 +4,12 @@ const initialState = {
   isLoggingIn: false, // 로그인 시도중
   isLoggingOut: false, // 로그아웃 시도중
   isLoggedIn: false,
+  loadMyInfoLoading: false, // 내정보 로딩
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
+  changeNicknameLoading: false, // 내정보 로딩
+  changeNicknameDone: false,
+  changeNicknameError: null,
   loginError: null,
   logoutError: null,
   signupLoading: false, // 회원가입 시도중
@@ -25,6 +31,10 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
@@ -44,11 +54,16 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
+export const CHANGE_NICKNAME_REQUEST =
+  'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS =
+  'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE =
+  'CHANGE_NICKNAME_FAILURE';
+
 const dummy_user = (data) => {
   return {
     ...data,
-    nickname: '디아블로',
-    id: 2,
     Posts: [],
     Followings: [],
     Followers: [],
@@ -63,15 +78,22 @@ export const loginRequestAction = (data) => {
   };
 };
 
+export const loadMyInfoRequestAction = () => {
+  return {
+    type: LOAD_MY_INFO_REQUEST,
+  };
+};
+
 export const logoutRequestAction = () => {
   return {
     type: LOGOUT_REQUEST,
   };
 };
 
-export const signupRequestAction = () => {
+export const signupRequestAction = (data) => {
   return {
     type: SIGNUP_REQUEST,
+    data,
   };
 };
 
@@ -89,6 +111,13 @@ export const unfollowRequestAction = (data) => {
   };
 };
 
+export const changeNicknameAction = (data) => {
+  return {
+    type: CHANGE_NICKNAME_REQUEST,
+    data: data,
+  };
+};
+
 const userReducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -96,20 +125,41 @@ const userReducer = (state = initialState, action) => {
         draft.isLoggingIn = true;
         draft.isLoggedIn = false;
         draft.loginError = null;
-        draft.user = action.data;
         break;
 
       case LOGIN_SUCCESS:
         draft.isLoggingIn = false;
         draft.isLoggedIn = true;
         draft.loginError = null;
-        draft.user = dummy_user(action.data);
+        draft.user = action.data;
         break;
 
       case LOGIN_FAILURE:
         draft.isLoggingIn = false;
-        draft.isLoggedIn = true;
+        draft.isLoggedIn = false;
         draft.loginError = action.error;
+        break;
+
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = null;
+        break;
+
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true;
+        draft.loadMyInfoError = null;
+        draft.user = action.data;
+        draft.isLoggedIn = true;
+        break;
+
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = action.error;
+        draft.user = null;
+        draft.isLoggedIn = false;
         break;
 
       case LOGOUT_REQUEST:
@@ -148,12 +198,12 @@ const userReducer = (state = initialState, action) => {
         break;
 
       case ADD_POST_TO_ME:
-        draft.user.Posts.unShift({ id: action.data });
+        draft.user.Posts.unshift({ id: action.data });
         break;
 
       case REMOVE_POST_OF_ME:
-        draft.user.Posts = state.user.Posts.filter(
-          (post) => post.id !== action.data
+        draft.user.Posts = draft.user.Posts.filter(
+          (post) => post.id !== parseInt(action.data.PostId)
         );
         break;
 
@@ -196,6 +246,25 @@ const userReducer = (state = initialState, action) => {
         draft.unFollowLoading = false;
         draft.unFollowDone = false;
         draft.unFollowError = action.error;
+        break;
+
+      case CHANGE_NICKNAME_REQUEST:
+        draft.changeNicknameLoading = true;
+        draft.changeNicknameDone = false;
+        draft.changeNicknameError = null;
+        break;
+
+      case CHANGE_NICKNAME_SUCCESS:
+        draft.changeNicknameLoading = false;
+        draft.changeNicknameDone = true;
+        draft.changeNicknameError = null;
+        draft.user.nickname = action.data.nickname;
+        break;
+
+      case CHANGE_NICKNAME_FAILURE:
+        draft.changeNicknameLoading = false;
+        draft.changeNicknameDone = false;
+        draft.changeNicknameError = action.error;
         break;
 
       default:

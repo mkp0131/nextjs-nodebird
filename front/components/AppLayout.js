@@ -26,7 +26,7 @@ const AppLayout = ({ children }) => {
   const onSearch = (value) => console.log(value);
 
   // 리덕스에서 값을 가져온다.
-  const { isLoggedIn } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
 
   // 메뉴 구성
   const items = [
@@ -79,16 +79,13 @@ const AppLayout = ({ children }) => {
           items={items}
         />
       </div>
-      <div>
+      <div style={{ padding: 10 }}>
         <Row gutter={10}>
-          <Col sm={24} md={4}>
-            {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          <Col sm={24} md={6}>
+            {user ? <UserProfile /> : <LoginForm />}
           </Col>
-          <Col sm={24} md={16}>
+          <Col sm={24} md={18}>
             {children}
-          </Col>
-          <Col sm={24} md={4}>
-            <div style={{ background: 'green' }}>2</div>
           </Col>
         </Row>
       </div>

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { all, fork } from 'redux-saga/effects';
 import postSaga from './post';
 import userSaga from './user';
@@ -15,6 +16,9 @@ import userSaga from './user';
  */
 
 export const DELAY_TIME = 1000;
+
+axios.defaults.baseURL = 'http://127.0.0.1:3065';
+axios.defaults.withCredentials = true;
 
 // Saga를 하나로 합쳐준다.
 export default function* rootSaga() {

@@ -1,19 +1,40 @@
 import { Button, Checkbox, Form, Input } from 'antd';
 import Head from 'next/head';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../components/AppLayout';
 import { signupRequestAction } from '../reducers/user';
+import Router from 'next/router';
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signupLoading } = useSelector(
-    (state) => state.user
-  );
+  const { signupLoading, signupDone, signupError, user } =
+    useSelector((state) => state.user);
+
+  // 회원가입이 끝나면 리다이렉트
+  useEffect(() => {
+    if (signupDone) {
+      Router.push('/');
+    }
+  }, [signupDone]);
+
+  // 회원정보가 있으면 리다이렉트
+  useEffect(() => {
+    if (user) {
+      Router.push('/');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (signupError) {
+      setTimeout(() => {
+        alert(signupError);
+      }, 1);
+    }
+  }, [signupError]);
 
   const onFinish = useCallback((values) => {
-    console.log('Success:', values);
-    dispatch(signupRequestAction());
+    dispatch(signupRequestAction(values));
   }, []);
 
   return (
@@ -28,12 +49,12 @@ const Signup = () => {
           // onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            label="아이디"
-            name="username"
+            label="이메일"
+            name="email"
             rules={[
               {
                 required: true,
-                message: 'Please input your username!',
+                message: 'Please input your email!',
               },
             ]}
           >

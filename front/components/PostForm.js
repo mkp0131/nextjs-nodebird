@@ -3,8 +3,8 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Input, Upload } from 'antd';
-import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { addPostAction } from '../reducers/post';
 
 const { TextArea } = Input;
@@ -12,15 +12,25 @@ const { TextArea } = Input;
 const PostForm = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+  const addPostError = useSelector(
+    (state) => state.post.addPostError
+  );
 
   const dispatch = useDispatch();
 
   const onFinish = useCallback((values) => {
-    console.log('PostForm', values);
-    dispatch(addPostAction(values.new_post));
+    dispatch(addPostAction(values));
     // 폼을 리셋한다.
     form.resetFields();
   }, []);
+
+  useEffect(() => {
+    if (addPostError) {
+      setTimeout(() => {
+        alert(addPostError);
+      }, 1);
+    }
+  }, [addPostError]);
 
   const uploadButton = (
     <div>

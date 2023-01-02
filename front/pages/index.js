@@ -5,6 +5,7 @@ import AppLayout from '../components/AppLayout';
 import PostCard from '../components/PostCard';
 import PostForm from '../components/PostForm';
 import { loadPostAction } from '../reducers/post';
+import { loadMyInfoRequestAction } from '../reducers/user';
 
 const Seperater = styled.div`
   padding-top: 20px;
@@ -12,12 +13,14 @@ const Seperater = styled.div`
 
 const Home = () => {
   const { isLoggedIn } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user.user);
   const { mainPosts, hasMorePost, loadPostLoading } =
     useSelector((state) => state.post);
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadPostAction(5));
+    dispatch(loadMyInfoRequestAction());
+    dispatch(loadPostAction());
   }, []);
 
   // 무한 스크롤 START
@@ -49,7 +52,7 @@ const Home = () => {
 
   return (
     <AppLayout>
-      {isLoggedIn && <PostForm />}
+      {user && <PostForm />}
       {mainPosts.map((post) => (
         <div key={post.id}>
           <PostCard post={post} />

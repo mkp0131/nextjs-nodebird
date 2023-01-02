@@ -1,22 +1,30 @@
 import { Button, Form, Input } from 'antd';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequestAction } from '../reducers/user';
+import Router from 'next/router';
 
 const LoginForm = () => {
   const dispatch = useDispatch();
   const onFinish = useCallback((values) => {
-    console.log('Success:', values);
-    const { username, password } = values;
-    dispatch(loginRequestAction({ username, password }));
+    const { email, password } = values;
+    dispatch(loginRequestAction({ email, password }));
   }, []);
   // const onFinishFailed = (errorInfo) => {
   //   console.log('Failed:', errorInfo);
   // };
-  const { isLoggingIn } = useSelector(
+  const { isLoggingIn, loginError } = useSelector(
     (state) => state.user
   );
+
+  useEffect(() => {
+    if (loginError) {
+      setTimeout(() => {
+        alert(loginError);
+      }, 1);
+    }
+  }, [loginError]);
 
   return (
     <Form
@@ -56,7 +64,14 @@ const LoginForm = () => {
         >
           로그인
         </Button>
-        <Button htmlType="button">회원가입</Button>
+        <Button
+          htmlType="button"
+          onClick={() => {
+            Router.push('/signup');
+          }}
+        >
+          회원가입
+        </Button>
       </Form.Item>
     </Form>
   );
