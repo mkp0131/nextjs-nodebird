@@ -918,4 +918,4 @@ curl --cookie "USER_TOKEN=Yes" http://127.0.0.1:5000/
 
 # '팔로우 / 언팔로우' 시작해야함.
 
-# follow, follower 에 에러가 있음. db초기화 하고 확인을 해야함.
+# follow, follower 에 에러가 있음. db초기화 하고 확인을 해야함. => db 초기화 결과 잘 작동함.
